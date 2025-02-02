@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List App</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      background-size: cover; /* Ensures the background fills the screen without repeating */
+      background-attachment: fixed; /* Keeps the background fixed while scrolling */
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h1{
+      background: linear-gradient(90deg, #ff7e5f, #feb47b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    footer {
+      background: linear-gradient(90deg, #ff7e5f, #feb47b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #taskInput {
+      width: calc(100% - 120px);
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      margin-right: 10px;
+      font-size: 1rem;
+    }
+
+    #addTaskBtn, #voiceInputBtn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #ff7e5f, #feb47b);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 5px 0;
+    }
+
+    #addTaskBtn:hover, #voiceInputBtn:hover {
+      opacity: 0.9;
+    }
+
+    #taskList {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    .taskItem {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s ease;
+    }
+
+    .taskItem:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .taskItem.completed {
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+
+    .taskItem button {
+      background: #ff4d4d;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .taskItem button:hover {
+      opacity: 0.8;
+    }
+
+    .taskItem .taskDetails {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .taskItem .taskDetails .taskDate {
+      font-size: 0.8rem;
+      color: #ddd;
+    }
+
+    .donate-section {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .donate-btn {
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .donate-btn:hover .donate-qr {
+      display: block;
+    }
+
+    .donate-qr {
+      display: none;
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .donate-qr img {
+      width: 150px;
+      height: 150px;
+      margin-bottom: 10px;
+    }
+
+    .donate-qr p {
+      color: #000;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>To-Do List App</h1>
+  <div class="container">
+    <input type="text" id="taskInput" placeholder="Add a new task...">
+    <input type="datetime-local" id="taskDateTime">
+    <button id="addTaskBtn">Add Task</button>
+    <button id="voiceInputBtn">🎤 Add by Voice</button>
+    <ul id="taskList"></ul>
+  </div>
+
+  <div class="donate-section">
+    <button class="donate-btn">
+      Donate (SOL, USDT, Cwallet)
+      <div class="donate-qr">
+        <img src="SOL.jpg" alt="SOL QR Code">
+        <p>SOL Chain Address: </p>
+        <img src="TRC20.jpg" alt="USDT QR Code">
+        <p>USDT TRC20 Address: </p>
+        <img src="CWallet.png" alt="Cwallet QR Code">
+        <p>PEPE ERC20: </p>
+      </div>
+    </button>
+    <footer class="text-center">
+      <p><a href="https://github.com/Akshayadeveloper">My GitHub</a> | <a href="https://www.akshayaselvakumar.com">My Portfolio</a> | <a href="https://youtube.com/@Glory-Akshaya">My Channel</a></p>
+      <p>&copy; 2025 AkshayaSelvakumar. All Rights Reserved.</p>
+    </footer>
+  </div>
+      
+  <script>
+    // Load tasks from LocalStorage
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    // Function to render tasks
+    function renderTasks() {
+      const taskList = document.getElementById('taskList');
+      taskList.innerHTML = '';
+      tasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        li.className = 'taskItem' + (task.completed ? ' completed' : '');
+        li.innerHTML = `
+          <div class="taskDetails">
+            <span>${task.text}</span>
+            ${task.dateTime ? `<span class="taskDate">${new Date(task.dateTime).toLocaleString()}</span>` : ''}
+          </div>
+          <button onclick="deleteTask(${index})">Delete</button>
+        `;
+        li.addEventListener('click', () => toggleComplete(index));
+        taskList.appendChild(li);
+      });
+    }
+
+    // Function to add a new task
+    function addTask() {
+      const taskInput = document.getElementById('taskInput');
+      const taskDateTime = document.getElementById('taskDateTime');
+      const text = taskInput.value.trim();
+      const dateTime = taskDateTime.value;
+
+      if (text !== '') {
+        tasks.push({ text, dateTime, completed: false });
+        taskInput.value = '';
+        taskDateTime.value = '';
+        saveTasks();
+        renderTasks();
+      }
+    }
+
+    // Function to delete a task
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      saveTasks();
+      renderTasks();
+    }
+
+    // Function to toggle task completion
+    function toggleComplete(index) {
+      tasks[index].completed = !tasks[index].completed;
+      saveTasks();
+      renderTasks();
+    }
+
+    // Function to save tasks to LocalStorage
+    function saveTasks() {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    // Voice Input Functionality
+    const voiceInputBtn = document.getElementById('voiceInputBtn');
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    voiceInputBtn.addEventListener('click', () => {
+      recognition.start();
+      voiceInputBtn.textContent = 'Listening...';
+    });
+
+    recognition.addEventListener('result', (event) => {
+      const transcript = event.results[0][0].transcript;
+      document.getElementById('taskInput').value = transcript;
+      voiceInputBtn.textContent = '🎤 Add by Voice';
+    });
+
+    recognition.addEventListener('end', () => {
+      voiceInputBtn.textContent = '🎤 Add by Voice';
+    });
+
+    recognition.addEventListener('error', (event) => {
+      console.error('Speech recognition error:', event.error);
+      voiceInputBtn.textContent = '🎤 Add by Voice';
+    });
+
+    // Event listeners
+    document.getElementById('addTaskBtn').addEventListener('click', addTask);
+    document.getElementById('taskInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addTask();
+    });
+
+    // Initial render
+    renderTasks();
+  </script>
+</body>
+</html>
