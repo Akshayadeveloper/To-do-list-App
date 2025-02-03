@@ -1,6 +1,8 @@
 # To-do-list-App
 <img src ="e92a49d7-3dbe-4021-8eea-8e3a1a24031a.webp" alt="To-do List App">
-https://akshayadeveloper.github.io/Gateway-To-Gradients/Gateway-To-Gradients.html
+https://akshayadeveloper.github.io/To-do-list-App/To-do list App.html
+
+
 ## Building a Modern, Responsive To-Do List Web App: A Seamless User Experience
 
 In today’s fast-paced world, productivity is at the forefront of personal and professional success. The To-Do List web app I developed combines cutting-edge UI/UX design principles, functionality, and the latest web technologies to create an intuitive experience for users. This project demonstrates how to blend aesthetic appeal with performance, making task management both visually appealing and easy to use.
